@@ -10,7 +10,7 @@ type User struct {
 	//username string
 	Email    string
 	Password string
-	// Add other fields as needed
+
 }
 
 // RegisterRequest represents the request payload for user registration
