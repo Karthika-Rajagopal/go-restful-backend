@@ -14,7 +14,7 @@ import (
 func main() {
 	cfg:= config.LoadConfig()
 
-	dsn := "host=localhost user=postgres password=postgres dbname=your-database-name port=5432 sslmode=disable"
+	dsn := "host=localhost user=postgres password=postgres dbname=golang-gorm port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database")
