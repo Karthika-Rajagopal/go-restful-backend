@@ -82,3 +82,16 @@ The userID is returned as a uint if the token is valid and the claims can be acc
 
 10. db migration is done
 
+11. Run the application go run main.go
+
+
+
+
+
+
+submitted by: R S KARTHIKA RAJAGOPAL
+Linkedin: https://www.linkedin.com/in/karthika-rajagopal-00b99a1b9
+
+Hoping to hear from you soon...
+Thankyou!!
+
