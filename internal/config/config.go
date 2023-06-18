@@ -1,36 +1,15 @@
 package config
 
-import (
-	"github.com/spf13/viper"
-)
-
-// Config represents the application configuration structure
+// Config represents the application configuration
 type Config struct {
-	Server struct {
-		Port string
-	}
-	Database struct {
-		Host     string
-		Port     string
-		User     string
-		Password string
-		Name     string
-	}
 	JWTSecret string
+	// Add other configuration properties here
 }
 
-// LoadConfig loads the application configuration from environment variables or a config file
+// LoadConfig loads the application configuration
 func LoadConfig() *Config {
-	viper.SetConfigFile(".env")
-
-	if err := viper.ReadInConfig(); err != nil {
-		panic(err)
+	return &Config{
+		JWTSecret: "your-jwt-secret", 
+		// Initialize other configuration properties here
 	}
-
-	var cfg Config
-	if err := viper.Unmarshal(&cfg); err != nil {
-		panic(err)
-	}
-
-	return &cfg
 }

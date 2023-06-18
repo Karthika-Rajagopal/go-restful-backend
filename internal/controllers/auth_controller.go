@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/Karthika-Rajagopal/go-restful-backend/internal/models"
-	"github.com/Karthika-Rajagopal/go-restful-backend/internal/repositories"
-	"github.com/Karthika-Rajagopal/go-restful-backend/internal/utils"
+	"Karthika-Rajagopal/go-restful-backend/internal/models"
+	"Karthika-Rajagopal/go-restful-backend/internal/repositories"
+	"Karthika-Rajagopal/go-restful-backend/internal/utils"
 )
 
 // AuthController represents the authentication controller
@@ -51,8 +51,13 @@ func (ac *AuthController) Login(c *gin.Context) {
 	}
 
 	user, err := ac.UserRepository.GetUserByEmail(loginRequest.Email)
-	if err != nil || user.Password != loginRequest.Password {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		return
+	}
+
+	if user.Password != loginRequest.Password {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
 

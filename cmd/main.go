@@ -1,15 +1,31 @@
 package main
 
 import (
-	"github.com/Karthika-Rajagopal/go-restful-backend/internal/config"
-	"github.com/Karthika-Rajagopal/go-restful-backend/internal/routes"
+	"log"
+
+	//"github.com/gin-gonic/gin"
+	"Karthika-Rajagopal/go-restful-backend/internal/config"
+	"Karthika-Rajagopal/go-restful-backend/internal/repositories"
+	"Karthika-Rajagopal/go-restful-backend/internal/routes"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func main() {
-	// Load the configuration
-	cfg := config.LoadConfig()
+	cfg:= config.LoadConfig()
 
-	// Setup routes and start the server
-	r := routes.SetupRouter(cfg.Server.Port)
-	r.Run()
+	dsn := "host=localhost user=postgres password=postgres dbname=your-database-name port=5432 sslmode=disable"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal("Failed to connect to database")
+	}
+
+	userRepo := repositories.NewUserRepository(db)
+
+	r := routes.SetupRouter(userRepo)
+
+	err = r.Run(":8080")
+	if err != nil {
+		log.Fatal("Failed to start server")
+	}
 }

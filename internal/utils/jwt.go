@@ -1,49 +1,45 @@
 package utils
 
 import (
-	"errors"
+	"fmt"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/Karthika-Rajagopal/go-restful-backend/internal/config"
 )
 
-// GenerateJWTToken generates a new JWT token for the given user ID
+// GenerateJWTToken generates a JWT token for the given user ID
 func GenerateJWTToken(userID uint) (string, error) {
-	cfg := config.LoadConfig()
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userID": userID,
 		"exp":    time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	return token.SignedString([]byte(cfg.JWTSecret))
+	tokenString, err := token.SignedString([]byte("your-jwt-secret"))
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
 }
 
-// ValidateJWTToken validates and extracts the user ID from the given JWT token
+// ValidateJWTToken validates a JWT token and returns the user ID
 func ValidateJWTToken(tokenString string) (uint, error) {
-	cfg := config.LoadConfig()
-
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("unexpected signing method")
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(cfg.JWTSecret), nil
+
+		return []byte("your-jwt-secret"), nil
 	})
 
 	if err != nil {
 		return 0, err
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok || !token.Valid {
-		return 0, errors.New("invalid token")
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userID := uint(claims["userID"].(float64))
+		return userID, nil
 	}
 
-	userID, ok := claims["userID"].(float64)
-	if !ok {
-		return 0, errors.New("invalid user ID in token")
-	}
-
-	return uint(userID), nil
+	return 0, fmt.Errorf("invalid token")
 }

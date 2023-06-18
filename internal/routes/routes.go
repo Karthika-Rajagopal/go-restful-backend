@@ -1,13 +1,15 @@
 package routes
 
 import (
+	"Karthika-Rajagopal/go-restful-backend/internal/controllers"
+	"Karthika-Rajagopal/go-restful-backend/internal/middleware"
+	"Karthika-Rajagopal/go-restful-backend/internal/repositories"
+
 	"github.com/gin-gonic/gin"
-	"github.com/Karthika-Rajagopal/go-restful-backend/internal/controllers"
-	"github.com/Karthika-Rajagopal/go-restful-backend/internal/middleware"
 )
 
-// SetupRouter sets up the Gin router with routes
-func SetupRouter(port string) *gin.Engine {
+// SetupRouter sets up the router and routes for the application
+func SetupRouter(userRepo repositories.UserRepository) *gin.Engine {
 	r := gin.Default()
 
 	authController := controllers.NewAuthController(userRepo)
@@ -25,8 +27,6 @@ func SetupRouter(port string) *gin.Engine {
 		userRoutes.GET("/profile", userController.GetProfile)
 		userRoutes.PUT("/profile", userController.UpdateProfile)
 	}
-
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return r
 }

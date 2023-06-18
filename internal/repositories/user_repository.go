@@ -3,9 +3,8 @@ package repositories
 import (
 	"errors"
 
+	"Karthika-Rajagopal/go-restful-backend/internal/models"
 	"gorm.io/gorm"
-
-	"github.com/Karthika-Rajagopal/go-restful-backend/internal/models"
 )
 
 // UserRepository represents the user repository
@@ -29,29 +28,35 @@ func (ur *UserRepository) CreateUser(user *models.User) error {
 	return nil
 }
 
-// GetUserByEmail retrieves a user from the database by email
+// GetUserByEmail retrieves a user by email from the database
 func (ur *UserRepository) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	result := ur.DB.Where("email = ?", email).First(&user)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, errors.New("user not found")
+		}
 		return nil, result.Error
 	}
 	return &user, nil
 }
 
-// GetUserByID retrieves a user from the database by ID
-func (ur *UserRepository) GetUserByID(id uint) (*models.User, error) {
+// GetUserByID retrieves a user by ID from the database
+func (ur *UserRepository) GetUserByID(userID uint) (*models.User, error) {
 	var user models.User
-	result := ur.DB.First(&user, id)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+	result := ur.DB.First(&user, userID)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, errors.New("user not found")
+		}
 		return nil, result.Error
 	}
 	return &user, nil
 }
 
 // UpdateUserProfile updates the user profile in the database
-func (ur *UserRepository) UpdateUserProfile(id uint, address string) error {
-	result := ur.DB.Model(&models.User{}).Where("id = ?", id).Updates(models.User{Address: address})
+func (ur *UserRepository) UpdateUserProfile(userID uint, address string) error {
+	result := ur.DB.Model(&models.User{}).Where("id = ?", userID).Update("address", address)
 	if result.Error != nil {
 		return result.Error
 	}

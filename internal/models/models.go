@@ -1,23 +1,27 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
-// User represents the user model
+// User represents the user entity
 type User struct {
 	gorm.Model
-	Email    string `gorm:"unique"`
+	//username string
+	Email    string
 	Password string
+	// Add other fields as needed
 }
 
 // RegisterRequest represents the request payload for user registration
 type RegisterRequest struct {
-	Email    string `json:"email" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required"`
 }
 
 // LoginRequest represents the request payload for user login
 type LoginRequest struct {
-	Email    string `json:"email" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required"`
 }
 

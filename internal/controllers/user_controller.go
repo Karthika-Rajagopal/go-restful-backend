@@ -4,8 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/Karthika-Rajagopal/go-restful-backend/internal/models"
-	"github.com/Karthika-Rajagopal/go-restful-backend/internal/repositories"
+	"Karthika-Rajagopal/go-restful-backend/internal/models"
+	"Karthika-Rajagopal/go-restful-backend/internal/repositories"
+	//"Karthika-Rajagopal/go-restful-backend/internal/utils"
 )
 
 // UserController represents the user controller
@@ -20,37 +21,35 @@ func NewUserController(userRepo repositories.UserRepository) *UserController {
 	}
 }
 
-// GetProfile handles the get profile API
+// GetProfile handles the user profile retrieval API
 func (uc *UserController) GetProfile(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-
 	user, err := uc.UserRepository.GetUserByID(userID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Profile not found"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve user profile"})
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, gin.H{"user": user})
 }
 
-// UpdateProfile handles the update profile API
+// UpdateProfile handles the user profile update API
 func (uc *UserController) UpdateProfile(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 
-	var updateRequest models.UpdateProfileRequest
-	if err := c.ShouldBindJSON(&updateRequest); err != nil {
+	var updateProfileRequest models.UpdateProfileRequest
+	if err := c.ShouldBindJSON(&updateProfileRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 
-	// Perform Metamask conversion logic and update the user profile
-	// ...
+	// Perform the required logic to convert the signed string to public address
+	// and update it in the database
 
-	// Update the user profile in the database
-	if err := uc.UserRepository.UpdateUserProfile(userID, updateRequest.Address); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update profile"})
+	if err := uc.UserRepository.UpdateUserProfile(userID, updateProfileRequest.Address); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user profile"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Profile updated successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "User profile updated successfully"})
 }
